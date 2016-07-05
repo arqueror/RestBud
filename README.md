@@ -2,6 +2,9 @@
 RestBud is a simple C# library built on the top of HttpClient that provides you with generic asynchronous/synchronous methods to: CREATE,PUT,POST,DELETE operations
 when communicating with ASP.NET Web Api 2
 
+# Referencing 
+Once you download the solution, please compile the library and reference it from your project
+
 # Configuration
 
 Once the library is referenced in your project:
