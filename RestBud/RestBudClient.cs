@@ -12,6 +12,8 @@ using System.Web;
 using Newtonsoft.Json;
 using RestBud.Models;
 using static RestBud.Models.RestBudVariables;
+//RICARDO VASQUEZ SIERRA 2016
+//YOU CAN USE THIS LIBRARY FOR COMMERCIAL USE, JUST GIVE ME SOME CREDIT
 namespace RestBud
 {
      public class RestBudClient
