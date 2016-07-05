@@ -260,7 +260,8 @@ namespace RestBud
                 return tokenResponse;
                 
             }
-            return JsonConvert.DeserializeObject<T>(responseMessage.Content.ReadAsStringAsync().Result);
+           var returnedObject = await responseMessage.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(returnedObject);
         }
     }
 }
