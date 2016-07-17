@@ -10,7 +10,7 @@ namespace RestBud.Models
     {
         public static string UserName { get; set; } = "";
         public static string Password { get; set; } = "";
-        public static int ApiVersion { get; set; } = 0;
+        public static int ApiVersion { get; set; } = -1;
         public static string BaseApiUrl { get; set; } = string.Empty;
         public static BearerModel TokenModel { get; set; } = null;
     }

@@ -20,24 +20,25 @@ namespace RestBud
     {
         private string _endpoint;
 
-         public void SetRestBudConfig(string baseUrl , string apiUserName = "", string apiUsrPwd = "",int apiVersion=0)
+         public void SetRestBudConfig(string baseUrl , string apiUserName = "", string apiUsrPwd = "",int apiVersion=-1)
          {
             BaseApiUrl = baseUrl;
             UserName = apiUserName != string.Empty ? apiUserName : string.Empty;
             Password = apiUsrPwd != string.Empty ? apiUsrPwd : string.Empty;
-            ApiVersion = apiVersion != 0 ? apiVersion : 0;
+            ApiVersion = apiVersion != -1 ? apiVersion : -1;
            
 
          }
         public void SetRequestParameters(string controller, string action,BearerModel token)
         {
             TokenModel = token;
-            _endpoint = String.Concat(BaseApiUrl, ApiVersion != 0 ? "/v" + ApiVersion : string.Empty, "/", controller, "/", action);
+            _endpoint = String.Concat(BaseApiUrl, ApiVersion != -1 ? "v" + ApiVersion+'/' : string.Empty, controller, "/", action);
 
         }
         public void SetRequestParameters(string controller, string action)
         {
-            _endpoint = String.Concat(BaseApiUrl, ApiVersion!=0?"/v"+ApiVersion:string.Empty , "/", controller, "/", action);
+            TokenModel = null;
+            _endpoint = String.Concat(BaseApiUrl, ApiVersion!=-1?"v"+ApiVersion+'/':string.Empty , controller, "/", action);
 
         }
         public RestBudClient()
@@ -258,7 +259,7 @@ namespace RestBud
                 {
                     jsonMessage = new StreamReader(responseStream).ReadToEnd();
                 }
-                var tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                var tokenResponse = JsonConvert.DeserializeObject<T>(jsonMessage);
                 return tokenResponse;
                 
             }
