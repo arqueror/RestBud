@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestBud", "RestBud\RestBud.csproj", "{AAE17037-5F5E-4701-BDE2-72C15D7EDE12}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestBud.Test", "RestBud.Test\RestBud.Test.csproj", "{FD794431-63D2-440D-B52D-1055150BB989}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestBud", "RestBud.csproj", "{DF6177D3-9ACD-43D8-BCE4-D5C6025793F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AAE17037-5F5E-4701-BDE2-72C15D7EDE12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAE17037-5F5E-4701-BDE2-72C15D7EDE12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AAE17037-5F5E-4701-BDE2-72C15D7EDE12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAE17037-5F5E-4701-BDE2-72C15D7EDE12}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD794431-63D2-440D-B52D-1055150BB989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD794431-63D2-440D-B52D-1055150BB989}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD794431-63D2-440D-B52D-1055150BB989}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD794431-63D2-440D-B52D-1055150BB989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF6177D3-9ACD-43D8-BCE4-D5C6025793F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF6177D3-9ACD-43D8-BCE4-D5C6025793F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF6177D3-9ACD-43D8-BCE4-D5C6025793F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF6177D3-9ACD-43D8-BCE4-D5C6025793F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
