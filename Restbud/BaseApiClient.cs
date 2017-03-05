@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 
-using Project.WebApiWrapper.Models;
 
-namespace Project.WebApiWrapper
+namespace Restbud
 {
     public abstract class BaseApiClient
 
@@ -228,7 +227,7 @@ namespace Project.WebApiWrapper
         protected async Task<HttpClient> NewHttpClient()
         {
             if (_bearerModel == null&&!string.IsNullOrEmpty(_userName)&&!string.IsNullOrEmpty(_password))
-                _bearerModel = await GetBearerToken<TokenResponseModel>(_endpoint, _userName, _password).ConfigureAwait(continueOnCapturedContext: false);
+                _bearerModel = await GetBearerToken<dynamic>(_endpoint, _userName, _password).ConfigureAwait(continueOnCapturedContext: false);
             if (_bearerModel == null) return new HttpClient();//no credentials provided, use a default client for Anonymous auth
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(_endpoint);
@@ -270,4 +269,5 @@ namespace Project.WebApiWrapper
 
 
     }
+
 }
