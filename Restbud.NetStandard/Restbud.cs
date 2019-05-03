@@ -10,51 +10,44 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
+using Xamarin.Forms;
 
-
-namespace Restbud
+namespace Restbud.NetStandard
 {
     /// <summary>
     /// Provides methods for GET,POST,PUT,DELETE operations
     /// </summary>
-    public class BaseApiClient
+    public class Restbud
 
     {
-        protected string _endpoint;
-
-        private string _userName { get; set; }
-        private string _password { get; set; }
+        protected string _baseUrl;
+        private string _requestMediaType { get; set; }
+        //private string _userName { get; set; }
+        //private string _password { get; set; }
 
         //private dynamic _bearerModel =null;
         public string BearerToken { get; private set; }
-        /// <summary>
-        /// Specifies bearer token type. This will be used later by GetBearerToken method when called internally to save a temp variable with token information for later calls
-        /// </summary>
-        /// <param name="type">BearerToken type</param>
-        //public void SetTokenResponseType(Type type)
-        //{
-        //    _bearerModel = Convert.ChangeType(_bearerModel, type);
-        //}
 
-
+        public bool StoreCredentialsLocally { get; set; }
 
         /// <summary>
         /// Sets default service endpoint for current request.
         /// </summary>
-        /// <param name="_apiUrl"></param>
+        /// <param name="_apiUrl">Base REST service URL</param>
         /// <param name="bearerToken">bearer token</param>
         /// <param name="user">username: Use if you dont have bearerToken yet</param>
         /// <param name="pwd">password:  Use if you dont have bearerToken yet</param>
-        public void SetRequestParameters(string _apiUrl, string bearerToken="", string user="", string pwd="")
+        public void SetRequestParameters(string _apiUrl, string bearerToken = "",string requestsMediaType= "application/json")
         {
 
-            _userName = user;
+            //_userName = user;
             BearerToken = bearerToken;
-            _password = pwd;
-            _endpoint = _apiUrl;
+            //_password = pwd;
+            _baseUrl = _apiUrl;
+            _requestMediaType = requestsMediaType;
 
         }
-        public BaseApiClient()
+        public Restbud()
         {
             //Initialize
         }
@@ -66,10 +59,10 @@ namespace Restbud
         /// <returns>object</returns>
         public T Get<T>(string id)
         {
-            using (HttpClient httpClient =NewHttpClient())
+            using (HttpClient httpClient = NewHttpClient())
             {
                 HttpResponseMessage response;
-                response = httpClient.GetAsync(String.Concat(_endpoint, "/", id)).Result;
+                response = httpClient.GetAsync(String.Concat(_baseUrl, "/", id)).Result;
                 var data = response.Content.ReadAsStringAsync().Result;
                 return JsonConvert.DeserializeObject<T>(data);
             }
@@ -85,7 +78,7 @@ namespace Restbud
             using (HttpClient httpClient = NewHttpClient())
             {
                 HttpResponseMessage response;
-                response =await httpClient.GetAsync(String.Concat(_endpoint, "/", id));
+                response = await httpClient.GetAsync(String.Concat(_baseUrl, "/", id));
 
                 var data = await response.Content.ReadAsStringAsync();
                 //return data as T;
@@ -102,7 +95,7 @@ namespace Restbud
         {
             using (HttpClient httpClient = NewHttpClient())
             {
-                HttpResponseMessage response = httpClient.GetAsync(String.Concat(_endpoint, ToQueryString(parms))).Result;
+                HttpResponseMessage response = httpClient.GetAsync(String.Concat(_baseUrl, ToQueryString(parms))).Result;
                 return JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
             }
         }
@@ -114,9 +107,9 @@ namespace Restbud
         /// <returns>object</returns>
         public async Task<T> GetAsync<T>(NameValueCollection parms)
         {
-            using (HttpClient httpClient =NewHttpClient())
+            using (HttpClient httpClient = NewHttpClient())
             {
-                HttpResponseMessage response = await httpClient.GetAsync(String.Concat(_endpoint, ToQueryString(parms)));
+                HttpResponseMessage response = await httpClient.GetAsync(String.Concat(_baseUrl, ToQueryString(parms)));
                 var data = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<T>(data);
             }
@@ -135,7 +128,7 @@ namespace Restbud
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = httpClient.PostAsync(_endpoint, requestMessage.Content).Result;
+                HttpResponseMessage result = httpClient.PostAsync(_baseUrl, requestMessage.Content).Result;
                 return result.IsSuccessStatusCode;
             }
         }
@@ -153,7 +146,7 @@ namespace Restbud
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = await httpClient.PostAsync(_endpoint, requestMessage.Content);
+                HttpResponseMessage result = await httpClient.PostAsync(_baseUrl, requestMessage.Content);
                 return result.IsSuccessStatusCode;
             }
         }
@@ -171,7 +164,7 @@ namespace Restbud
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = httpClient.PostAsync(_endpoint, requestMessage.Content).Result;
+                HttpResponseMessage response = httpClient.PostAsync(_baseUrl, requestMessage.Content).Result;
                 var parsedResponse = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
                 return parsedResponse;
             }
@@ -190,7 +183,7 @@ namespace Restbud
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PostAsync(_endpoint, requestMessage.Content);
+                HttpResponseMessage response = await httpClient.PostAsync(_baseUrl, requestMessage.Content);
                 var returnedObject = await response.Content.ReadAsStringAsync();
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
@@ -210,7 +203,7 @@ namespace Restbud
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Put;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = httpClient.PutAsync(String.Concat(_endpoint, "/", id), requestMessage.Content).Result;
+                HttpResponseMessage response = httpClient.PutAsync(String.Concat(_baseUrl, "/", id), requestMessage.Content).Result;
                 var returnedObject = response.Content.ReadAsStringAsync().Result;
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
@@ -230,7 +223,7 @@ namespace Restbud
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Put;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = await httpClient.PutAsync(String.Concat(_endpoint, "/", id), requestMessage.Content);
+                HttpResponseMessage result = await httpClient.PutAsync(String.Concat(_baseUrl, "/", id), requestMessage.Content);
                 var returnedObject = await result.Content.ReadAsStringAsync();
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
@@ -250,8 +243,8 @@ namespace Restbud
                 requestMessage.Method = HttpMethod.Put;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8,
                     "application/json");
-                HttpResponseMessage result = httpClient.PutAsync(_endpoint, requestMessage.Content).Result;
-                var returnedObject =  result.Content.ReadAsStringAsync().Result;
+                HttpResponseMessage result = httpClient.PutAsync(_baseUrl, requestMessage.Content).Result;
+                var returnedObject = result.Content.ReadAsStringAsync().Result;
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
             }
@@ -264,13 +257,13 @@ namespace Restbud
         /// <returns>object</returns>
         public async Task<T> PutAsync<T>(T data)
         {
-            using (HttpClient httpClient =NewHttpClient())
+            using (HttpClient httpClient = NewHttpClient())
             {
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Put;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = await httpClient.PutAsync(_endpoint, requestMessage.Content);
-                var returnedObject =await result.Content.ReadAsStringAsync();
+                HttpResponseMessage result = await httpClient.PutAsync(_baseUrl, requestMessage.Content);
+                var returnedObject = await result.Content.ReadAsStringAsync();
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
             }
@@ -285,8 +278,8 @@ namespace Restbud
         {
             using (var httpClient = NewHttpClient())
             {
-                HttpResponseMessage result = httpClient.DeleteAsync(String.Concat(_endpoint, "/", id)).Result;
-                var returnedObject =  result.Content.ReadAsStringAsync().Result;
+                HttpResponseMessage result = httpClient.DeleteAsync(String.Concat(_baseUrl, "/", id)).Result;
+                var returnedObject = result.Content.ReadAsStringAsync().Result;
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
             }
@@ -301,7 +294,7 @@ namespace Restbud
         {
             using (HttpClient httpClient = NewHttpClient())
             {
-                HttpResponseMessage result = await httpClient.DeleteAsync(String.Concat(_endpoint, "/", id));
+                HttpResponseMessage result = await httpClient.DeleteAsync(String.Concat(_baseUrl, "/", id));
                 var returnedObject = await result.Content.ReadAsStringAsync();
                 var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
                 return parsedResponse;
@@ -313,10 +306,10 @@ namespace Restbud
             //    _bearerModel = await RequestBearerToken<dynamic>(_endpoint, _userName, _password).ConfigureAwait(continueOnCapturedContext: false);
             //if (_bearerModel == null) return new HttpClient();//no credentials provided, use a default client for Anonymous auth
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(_endpoint);
+            client.BaseAddress = new Uri(_baseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            if(!string.IsNullOrEmpty(BearerToken))
+            if (!string.IsNullOrEmpty(BearerToken))
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", BearerToken);
             return client;
         }
@@ -331,17 +324,18 @@ namespace Restbud
         /// </summary>
         /// <typeparam name="T">response type</typeparam>
         /// <param name="endpointUrl">endpoint url</param>
-        /// <param name="Username">username</param>
-        /// <param name="Password">password</param>
+        /// <param name="requestContent">Content for this request</param>
         /// <returns></returns>
-        public async Task<T> RequestBearerToken<T>(string endpointUrl, string Username, string Password) where T:class
+        public async Task<Response<T,HttpResponseMessage>> RequestBearerToken<T>(string endpoint,HttpContent requestContent) where T : class
         {
+            var rs = new Response<T, HttpResponseMessage>();
             HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri(endpointUrl);
             client.DefaultRequestHeaders.Accept.Clear();
 
-            HttpContent requestContent = new StringContent("grant_type=password&username=" + Username + "&password=" + Password, Encoding.UTF8, "application/x-www-form-urlencoded");
-            var responseMessage = await client.PostAsync(endpointUrl,requestContent).ConfigureAwait(continueOnCapturedContext: false);
+            //HttpContent requestContent = new StringContent("grant_type=password&username=" + Username + "&password=" + Password, Encoding.UTF8, "application/x-www-form-urlencoded");
+            var responseMessage = await client.PostAsync(endpoint, requestContent).ConfigureAwait(continueOnCapturedContext: false);
+            rs.HttpRespondeMessage = responseMessage;
             if (responseMessage.IsSuccessStatusCode)
             {
                 string jsonMessage;
@@ -351,15 +345,43 @@ namespace Restbud
                 }
 
                 T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
-                return tokenResponse;
+                rs.Content = tokenResponse;
+               
             }
-            else
-            {
-                return null;
-            }
+            return rs;
         }
-
+        //protected void RetrieveCredentials()
+        //{
+        //    if (Application.Current.Properties.ContainsKey("restbud_username"))
+        //    {
+        //        var id = Application.Current.Properties["id"] as int;
+        //    }
+        //    if (Application.Current.Properties.ContainsKey("restbud_password"))
+        //    {
+        //        var id = Application.Current.Properties["id"] as int;
+        //    }
+        //    if (Application.Current.Properties.ContainsKey("restbud_bearer"))
+        //    {
+        //        var id = Application.Current.Properties["id"] as int;
+        //    }
+        //}
+        //protected void StoreCredentials()
+        //{
+        //    if (!StoreCredentialsLocally) return;
+        //    if (!string.IsNullOrEmpty(_userName))
+        //    {
+        //        Application.Current.Properties["restbud_username"] = _userName;
+        //    }
+        //    if (!string.IsNullOrEmpty(_password))
+        //    {
+        //        Application.Current.Properties["restbud_password"] = _password;
+        //    }
+        //    if (!string.IsNullOrEmpty(BearerToken))
+        //    {
+        //        Application.Current.Properties["restbud_bearer"] = BearerToken;
+        //    }
+        //    Application.Current.SavePropertiesAsync();
+        //}
 
     }
-
 }
