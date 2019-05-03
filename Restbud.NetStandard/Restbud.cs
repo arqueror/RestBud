@@ -73,16 +73,28 @@ namespace Restbud.NetStandard
         /// <typeparam name="T">response type</typeparam>
         /// <param name="id">resource id</param>
         /// <returns>object</returns>
-        public async Task<T> GetAsync<T>(string id)
+        public async Task<Response<T, HttpResponseMessage>> GetAsync<T>(string id) where T : class
         {
             using (HttpClient httpClient = NewHttpClient())
             {
+                var rs = new Response<T, HttpResponseMessage>();
                 HttpResponseMessage response;
                 response = await httpClient.GetAsync(String.Concat(_baseUrl, "/", id));
 
-                var data = await response.Content.ReadAsStringAsync();
-                //return data as T;
-                return JsonConvert.DeserializeObject<T>(data);
+                rs.HttpResponseMessage = response;
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+
+                    T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    rs.Content = tokenResponse;
+
+                }
+                return rs;
             }
         }
         /// <summary>
@@ -105,13 +117,27 @@ namespace Restbud.NetStandard
         /// <typeparam name="T">response type</typeparam>
         /// <param name="parms">list of params</param>
         /// <returns>object</returns>
-        public async Task<T> GetAsync<T>(NameValueCollection parms)
+        public async Task<Response<T, HttpResponseMessage>> GetAsync<T>(NameValueCollection parms) where T : class
         {
             using (HttpClient httpClient = NewHttpClient())
             {
+                var rs = new Response<T, HttpResponseMessage>();
                 HttpResponseMessage response = await httpClient.GetAsync(String.Concat(_baseUrl, ToQueryString(parms)));
-                var data = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(data);
+
+                rs.HttpResponseMessage = response;
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+
+                    T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    rs.Content = tokenResponse;
+
+                }
+                return rs;
             }
         }
         /// <summary>
@@ -175,18 +201,30 @@ namespace Restbud.NetStandard
         /// <typeparam name="T">response type</typeparam>
         /// <param name="data">object to send in request</param>
         /// <returns>object</returns>
-        public async Task<T> PostAsync<T>(object data) where T : class
+        public async Task<Response<T, HttpResponseMessage>> PostAsync<T>(object data) where T : class
         {
             using (HttpClient httpClient = NewHttpClient())
             {
+                var rs = new Response<T, HttpResponseMessage>();
                 String obj = JsonConvert.SerializeObject(data);
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Post;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await httpClient.PostAsync(_baseUrl, requestMessage.Content);
-                var returnedObject = await response.Content.ReadAsStringAsync();
-                var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
-                return parsedResponse;
+                rs.HttpResponseMessage = response;
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+
+                    T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    rs.Content = tokenResponse;
+
+                }
+                return rs;
             }
         }
         /// <summary>
@@ -216,17 +254,29 @@ namespace Restbud.NetStandard
         /// <param name="id">resource id</param>
         /// <param name="data">object containing updated resource data</param>
         /// <returns>object</returns>
-        public async Task<T> PutAsync<T>(string id, T data)
+        public async Task<Response<T, HttpResponseMessage>> PutAsync<T>(string id, T data) where T : class
         {
             using (HttpClient httpClient = NewHttpClient())
             {
+                var rs = new Response<T, HttpResponseMessage>();
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Put;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = await httpClient.PutAsync(String.Concat(_baseUrl, "/", id), requestMessage.Content);
-                var returnedObject = await result.Content.ReadAsStringAsync();
-                var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
-                return parsedResponse;
+                HttpResponseMessage response = await httpClient.PutAsync(String.Concat(_baseUrl, "/", id), requestMessage.Content);
+                rs.HttpResponseMessage = response;
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+
+                    T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    rs.Content = tokenResponse;
+
+                }
+                return rs;
             }
         }
         /// <summary>
@@ -255,17 +305,29 @@ namespace Restbud.NetStandard
         /// <typeparam name="T">response type</typeparam>
         /// <param name="data">object containing updated resource data</param>
         /// <returns>object</returns>
-        public async Task<T> PutAsync<T>(T data)
+        public async Task<Response<T, HttpResponseMessage>> PutAsync<T>(T data) where T : class
         {
             using (HttpClient httpClient = NewHttpClient())
             {
+                var rs = new Response<T, HttpResponseMessage>();
                 HttpRequestMessage requestMessage = new HttpRequestMessage();
                 requestMessage.Method = HttpMethod.Put;
                 requestMessage.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-                HttpResponseMessage result = await httpClient.PutAsync(_baseUrl, requestMessage.Content);
-                var returnedObject = await result.Content.ReadAsStringAsync();
-                var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
-                return parsedResponse;
+                HttpResponseMessage response = await httpClient.PutAsync(_baseUrl, requestMessage.Content);
+                rs.HttpResponseMessage = response;
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+
+                    T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    rs.Content = tokenResponse;
+
+                }
+                return rs;
             }
         }
         /// <summary>
@@ -290,14 +352,26 @@ namespace Restbud.NetStandard
         /// <typeparam name="T">response type</typeparam>
         /// <param name="id">resource id</param>
         /// <returns>object</returns>
-        public async Task<T> DeleteAsync<T>(string id)
+        public async Task<Response<T, HttpResponseMessage>> DeleteAsync<T>(string id) where T : class
         {
             using (HttpClient httpClient = NewHttpClient())
             {
-                HttpResponseMessage result = await httpClient.DeleteAsync(String.Concat(_baseUrl, "/", id));
-                var returnedObject = await result.Content.ReadAsStringAsync();
-                var parsedResponse = JsonConvert.DeserializeObject<T>(returnedObject);
-                return parsedResponse;
+                var rs = new Response<T, HttpResponseMessage>();
+                HttpResponseMessage response = await httpClient.DeleteAsync(String.Concat(_baseUrl, "/", id));
+                rs.HttpResponseMessage = response;
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonMessage;
+                    using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        jsonMessage = new StreamReader(responseStream).ReadToEnd();
+                    }
+
+                    T tokenResponse = (T)JsonConvert.DeserializeObject(jsonMessage, typeof(T));
+                    rs.Content = tokenResponse;
+
+                }
+                return rs;
             }
         }
         protected HttpClient NewHttpClient()
@@ -335,7 +409,7 @@ namespace Restbud.NetStandard
 
             //HttpContent requestContent = new StringContent("grant_type=password&username=" + Username + "&password=" + Password, Encoding.UTF8, "application/x-www-form-urlencoded");
             var responseMessage = await client.PostAsync(endpoint, requestContent).ConfigureAwait(continueOnCapturedContext: false);
-            rs.HttpRespondeMessage = responseMessage;
+            rs.HttpResponseMessage = responseMessage;
             if (responseMessage.IsSuccessStatusCode)
             {
                 string jsonMessage;
